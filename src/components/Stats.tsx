@@ -27,6 +27,7 @@ const getCurrentPayPeriodRange = () => {
 
 const getAllShiftsInPayPeriod = (data: Data) => {
     const dates = getCurrentPayPeriodRange();
+    console.log(dates);
 
     return data.history.filter(shift => {
         const shiftMs = new Date(shift.date).getTime();
@@ -45,17 +46,17 @@ export default function Stats({ data }: { data: Data }) {
 
     const { hoursWorked, totalPay } = useMemo(() => {
         const hoursWorked = getTotalHours(data);
-        const totalPay = hoursWorked * 17.97;
+        const totalPay = hoursWorked * 17.87;
 
         return { hoursWorked: hoursWorked, totalPay: totalPay };
     }, [data])
 
     return (
-        <div className="w-full flex flex-col">
-            <span>Pay Period Hours Worked:</span>
-            <span>{hoursWorked}</span>
-            <span>Est. Pay Check:</span>
-            <span>${Math.floor(totalPay)}</span>
+        <div className="mt-30 mb-20 flex flex-col">
+            <span className="mb-1">Hours</span>
+            <span className="mb-4 text-3xl">{parseFloat(hoursWorked.toFixed(1))}</span>
+            <span className="mb-1">Est. Pay</span>
+            <span className="text-3xl">${Math.floor(totalPay)}</span>
         </div>
     )
 }

@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import Stats from "./components/Stats";
+import HistoryLine from "./components/HistoryLine";
+import Hero from "./components/Hero";
+
+export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
 
 export interface LoggedShift {
+    id: string,
     date: Date,
     in: string,
     out: string,
@@ -31,21 +36,50 @@ export const dateToClockString = (d: Date) => {
     return hours +":"+ ( minutes<10 ? "0"+minutes : minutes );
 }
 
+export const formattedDate = (d: Date) => {
+    return (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
+}
+
 export default function App() {
     const [data,] = useState(getDataFromStorage());
 
+    const handleClearStorage = () => {
+        localStorage.clear();
+        location.reload();
+    }
+
     return (
-        <div className="w-full h-full m-0 flex flex-col">
+        <div className="relative w-full h-full m-0 flex flex-col px-5 py-4">
+            <Hero />
+
+            <span className="text-lg font-bold">PUNCH</span>
+
             <Stats data={data} />
-            <hr />
-            <span>Active Shift:</span>
-            {data.active && <span>Clocked in at {dateToClockString(data.active)}</span>}
-            {!data.active && <span>None</span>}
-            <hr />
-            <span>History:</span>
-            {data.history.map(shift => <span>In: {shift.in} - Out: {shift.out} - Hours: {shift.hoursWorked}</span>)}
-            <hr />
-            <Link to="/punch"><button>Punch</button></Link>
+
+            <div className="w-full border border-b-3 flex flex-col">
+                <div className="px-4 py-3 flex flex-col">
+                    <span>Active Shift</span>
+                    {data.active && <span className="text-lg font-semibold">In at {dateToClockString(data.active)}</span>}
+                    {!data.active && <span className="text-lg font-semibold">None</span>}
+                </div>
+                <Link to="/punch"><button className="border-t px-3 py-3 w-full">Punch</button></Link>
+            </div>
+            
+            <span className="mt-6 mb-3">History:</span>
+            <div className="flex flex-col border border-b-2 mb-8">
+                {data.history.length > 0 && data.history.slice(0,3).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(shift => (
+                    <HistoryLine key={shift.id} shift={shift} />
+                ))}
+                {data.history.length > 0 && (
+                    <Link to="/history"><button className="w-full text-center my-4">View All History</button></Link>
+                )}
+                {data.history.length == 0 && (
+                    <span className="text-center my-4 text-gray-500">No history.</span>
+                )}
+            </div>
+
+            <button onClick={handleClearStorage}>Clear Storage</button>
+
         </div>
     )
 }
