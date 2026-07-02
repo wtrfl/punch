@@ -15,7 +15,9 @@ const getCurrentPayPeriodRange = () => {
     const diffMs = today.getTime() - anchor.getTime();
     const remainderMs = ( ( diffMs % TWO_WEEKS_MS ) + TWO_WEEKS_MS ) % TWO_WEEKS_MS;
 
-    const lastPayPeriodEnd = new Date(today.getTime() - remainderMs);
+    const adjustedRemainder = remainderMs == 0 ? TWO_WEEKS_MS : remainderMs;
+
+    const lastPayPeriodEnd = new Date(today.getTime() - adjustedRemainder);
     const nextPayPeriodEnd = new Date(lastPayPeriodEnd.getTime() + TWO_WEEKS_MS);
 
     return {
