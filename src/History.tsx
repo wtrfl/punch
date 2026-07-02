@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getDataFromStorage, type LoggedShift } from "./App"
 import HistoryLine from "./components/HistoryLine";
 import Icon from "./components/Icon";
+import { Link } from "react-router";
 
 interface SlideableProps {
     shift: LoggedShift,
@@ -41,7 +42,7 @@ export default function History() {
 
     return (
         <div className="w-full h-full m-0 flex flex-col px-5 py-4">
-            <span className="text-lg font-bold">PUNCH</span>
+            <Link to="/"><span className="text-lg font-bold">PUNCH</span></Link>
             <div className="flex flex-col border border-b-2 mb-8 mt-8">
                 {data.history.length > 0 && data.history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(shift => (
                     <SlideableLine shift={shift} handleDelete={handleDelete} key={shift.id} />

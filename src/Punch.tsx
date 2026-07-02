@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { getDataFromStorage, dateToClockString } from "./App";
 import Icon from "./components/Icon";
 import PunchDate from "./components/PunchDate";
@@ -89,7 +89,7 @@ export default function Punch() {
     return (
         <div className="relative w-full h-full m-0 flex flex-col justify-between px-5 py-4">
             {editModalOpen && <EditModal setTime={setTime} setOpen={setEditModalOpen} />}
-            <span className="text-lg font-bold">PUNCH</span>
+            <Link to="/"><span className="text-lg font-bold">PUNCH</span></Link>
             <div className="flex flex-col items-center gap-3">
                 <PunchDate disabled={data.active ? true : false} date={date} setDate={setDate} />
                 <span className="text-8xl">{hours<10 ? "0"+hours : hours}:{minutes<10 ? "0"+minutes : minutes}</span>
