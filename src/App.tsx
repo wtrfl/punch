@@ -57,7 +57,7 @@ export default function App() {
                     {data.active && <span className="text-lg font-semibold mt-1">Started at {dateToClockString(data.active)}</span>}
                     {!data.active && <span className="text-lg font-semibold mt-1">None</span>}
                 </div>
-                <Link to="/punch"><button className="border-t border-black px-3 py-3 w-full font-bold text-white bg-purple-400">Punch</button></Link>
+                <Link to="/punch"><button className="button border-t border-black px-3 py-3 w-full font-bold text-white">Punch</button></Link>
             </div>
             
             <span className="mt-6 mb-3">History:</span>
