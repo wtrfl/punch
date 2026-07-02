@@ -47,6 +47,9 @@ export default function History() {
                 {data.history.length > 0 && data.history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(shift => (
                     <SlideableLine shift={shift} handleDelete={handleDelete} key={shift.id} />
                 ))}
+                {data.history.length == 0 && (
+                    <span className="text-center my-4 text-gray-500">No history.</span>
+                )}
             </div>
         </div>
     )
