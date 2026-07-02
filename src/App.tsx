@@ -44,7 +44,7 @@ export default function App() {
     const [data,] = useState(getDataFromStorage());
 
     return (
-        <div className="relative w-full h-full m-0 flex flex-col px-5 py-4">
+        <div className="relative w-full h-full m-0 flex flex-col px-5 py-4 overflow-x-hidden">
             <Hero />
 
             <span className="text-lg font-bold">PUNCH</span>
@@ -53,11 +53,11 @@ export default function App() {
 
             <div className="w-full border border-b-3 flex flex-col">
                 <div className="px-4 py-3 flex flex-col">
-                    <span>Active Shift</span>
-                    {data.active && <span className="text-lg font-semibold">In at {dateToClockString(data.active)}</span>}
-                    {!data.active && <span className="text-lg font-semibold">None</span>}
+                    <span className="font-mono text-xs">TODAY'S SHIFT</span>
+                    {data.active && <span className="text-lg font-semibold mt-1">Started at {dateToClockString(data.active)}</span>}
+                    {!data.active && <span className="text-lg font-semibold mt-1">None</span>}
                 </div>
-                <Link to="/punch"><button className="border-t px-3 py-3 w-full">Punch</button></Link>
+                <Link to="/punch"><button className="border-t border-black px-3 py-3 w-full font-bold text-white bg-purple-400">Punch</button></Link>
             </div>
             
             <span className="mt-6 mb-3">History:</span>
@@ -66,7 +66,7 @@ export default function App() {
                     <HistoryLine key={shift.id} shift={shift} />
                 ))}
                 {data.history.length > 0 && (
-                    <Link to="/history"><button className="w-full text-center my-4">View All History</button></Link>
+                    <Link to="/history"><button className="w-full text-center my-3">View Full History</button></Link>
                 )}
                 {data.history.length == 0 && (
                     <span className="text-center my-4 text-gray-500">No history.</span>
