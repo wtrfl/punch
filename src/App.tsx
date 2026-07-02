@@ -43,11 +43,6 @@ export const formattedDate = (d: Date) => {
 export default function App() {
     const [data,] = useState(getDataFromStorage());
 
-    const handleClearStorage = () => {
-        localStorage.clear();
-        location.reload();
-    }
-
     return (
         <div className="relative w-full h-full m-0 flex flex-col px-5 py-4">
             <Hero />
@@ -77,8 +72,6 @@ export default function App() {
                     <span className="text-center my-4 text-gray-500">No history.</span>
                 )}
             </div>
-
-            <button onClick={handleClearStorage}>Clear Storage</button>
 
         </div>
     )
