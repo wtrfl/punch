@@ -60,7 +60,7 @@ export default function App() {
                 <Link to="/punch"><button className="button border-t border-black px-3 py-3 w-full font-bold text-white">Punch</button></Link>
             </div>
             
-            <span className="mt-6 mb-3">History:</span>
+            <span className="mt-6 mb-2 text-xs font-mono">HISTORY</span>
             <div className="flex flex-col border border-b-2 mb-8">
                 {data.history.length > 0 && data.history.slice(0,3).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(shift => (
                     <HistoryLine key={shift.id} shift={shift} />
