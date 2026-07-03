@@ -15,18 +15,39 @@ export interface LoggedShift {
 }
 
 export interface Data {
+    version: number,
     active: Date | null,
+    earliest: Date | null,
+    latest: Date | null,
     history: LoggedShift[]
 }
 
 export const getDataFromStorage: () => Data = () => {
     const stored = localStorage.getItem('data');
     
-    if (!stored) return { active: null, history: [] }
+    if (!stored) return { version: 2, active: null, earliest: null, latest: null, history: [] }
 
     const parsed = JSON.parse(stored);
+
+    if (!parsed.version && parsed.history.length > 0) { // version is 1
+        parsed.earliest = parsed.history[0].date;
+        parsed.latest = parsed.history[0].date;
+        for (let i = 1; i < parsed.history.length; i++) {
+            if (parsed.history[i].date > parsed.latest) {
+                parsed.latest = parsed.history[i].date;
+            }
+            if (parsed.history[i].date < parsed.earliest) {
+                parsed.earliest = parsed.history[i].date;
+            }
+
+            if (!parsed.history[i].id) {
+                parsed.history[i].id = crypto.randomUUID();
+            }
+        }
+        parsed.version = 2;
+    }
     
-    if (parsed.active) return { ...parsed, active: new Date(parsed.active) }
+    if (parsed.active) parsed.active = new Date(parsed.active);
     return parsed;
 }
 
