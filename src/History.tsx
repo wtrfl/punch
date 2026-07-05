@@ -1,32 +1,8 @@
 import { useEffect, useState } from "react";
-import { getDataFromStorage, type LoggedShift } from "./App"
-import HistoryLine from "./components/HistoryLine";
-import Icon from "./components/Icon";
+import { getDataFromStorage } from "./App"
 import { Link } from "react-router";
-
-interface SlideableProps {
-    shift: LoggedShift,
-    handleDelete: (id: string) => void
-}
-
-const SlideableLine: React.FC<SlideableProps> = ({ shift, handleDelete }) => {
-
-    const [slid, setSlid] = useState(false);
-
-    return (
-        <div className="overflow-x-hidden relative">
-            <div style={{ width: "100%", transform: slid ? "translateX(-100px)" : "none" }} onClick={() => setSlid(s => !s)}>
-                <HistoryLine shift={shift} />
-            </div>
-            {slid && (
-                <button onClick={() => handleDelete(shift.id)} className="absolute top-0 right-0 h-full bg-red-400 flex flex-col items-center justify-center border-b border-l" style={{ width: 100 }}>
-                    <Icon type="trash" stroke="white" />
-                    <span className="text-white">Delete</span>
-                </button>
-            )}
-        </div>
-    )
-}
+import { anchor, TWO_WEEKS_MS } from "./utils";
+import HistoryPeriod from "./components/HistoryPeriod";
 
 export default function History() {
 
@@ -40,12 +16,30 @@ export default function History() {
         setData(d => ({ ...d, history: d.history.filter(i => i.id !== id) }))
     }
 
+    const periods = () => {
+        if (data.earliest == null || data.latest == null) return;
+
+        let currentDate: Date = new Date(anchor);
+        while (currentDate > new Date(data.earliest)) {
+            currentDate = new Date(currentDate.getTime() - TWO_WEEKS_MS);
+        }
+
+        let result: Date[] = [];
+        while (currentDate < new Date(data.latest)) {
+            result.push(currentDate);
+            currentDate = new Date(currentDate.getTime() + TWO_WEEKS_MS);
+        }
+        result.push(new Date(currentDate.getTime()));
+        
+        return result;
+    }
+
     return (
         <div className="w-full h-full m-0 flex flex-col px-5 py-4">
             <Link to="/"><span className="text-lg font-bold">PUNCH</span></Link>
-            <div className="flex flex-col border border-b-2 mb-8 mt-8">
-                {data.history.length > 0 && data.history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(shift => (
-                    <SlideableLine shift={shift} handleDelete={handleDelete} key={shift.id} />
+            <div className="flex flex-col-reverse mb-8 mt-8 gap-6">
+                {data.history.length > 0 && periods()?.map(period => (
+                    <HistoryPeriod data={data} handleDelete={handleDelete} referenceDate={period} />
                 ))}
                 {data.history.length == 0 && (
                     <span className="text-center my-4 text-gray-500">No history.</span>
