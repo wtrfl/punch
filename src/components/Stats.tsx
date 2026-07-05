@@ -5,7 +5,7 @@ import { getTotalHours } from "../utils";
 export default function Stats({ data }: { data: Data }) {
 
     const { hoursWorked, totalPay } = useMemo(() => {
-        const hoursWorked = getTotalHours(data);
+        const hoursWorked = getTotalHours(data, new Date());
         const totalPay = hoursWorked * 17.87;
 
         return { hoursWorked: hoursWorked, totalPay: totalPay };
