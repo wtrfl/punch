@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router";
 import { getDataFromStorage, dateToClockString } from "./App";
 import Icon from "./components/Icon";
@@ -25,7 +25,7 @@ export default function Punch() {
 
     const navigate = useNavigate();
 
-    const [data,] = useState(getDataFromStorage());
+    const [data, setData] = useState(getDataFromStorage());
 
     const [hours, setHours] = useState(new Date().getHours());
     const [minutes, setMinutes] = useState(new Date().getMinutes());
@@ -34,6 +34,10 @@ export default function Punch() {
 
     const today = new Date().toISOString().split("T")[0];
     const [date, setDate] = useState<string>(data.active ? data.active.toISOString().split("T")[0] : today);
+
+    useEffect(() => {
+        localStorage.setItem("data", JSON.stringify(data));
+    }, [data])
 
     const setTime = (hours: number, minutes: number) => {
         setHours(hours);
@@ -58,31 +62,40 @@ export default function Punch() {
     }
 
     const handlePunch = () => {
-        const target = new Date(date + "T00:00:00");
-        target.setHours(hours, minutes, 0, 0);
+        const punchTime = new Date(date + "T00:00:00");
+        punchTime.setHours(hours, minutes, 0, 0);
 
-        var newData;
-        if (data.active) {
-            if (target < data.active) return;
+        console.log(punchTime.toISOString());
 
-            newData = { 
-                active: null, 
-                history: [
-                    { 
-                        id: crypto.randomUUID(),
-                        date: new Date(date + "T00:00:00"),
-                        in: dateToClockString(data.active), 
-                        out: dateToClockString(target), 
-                        hoursWorked: calculateHours(data.active, target)
-                    },
-                    ...data.history
-                ] 
+        if (data.active) { // punch out
+            if (punchTime < data.active) return;
+
+            const dateOfShift = new Date(date + "T00:00:00");
+
+            console.log(dateOfShift.toISOString());
+
+            const newItem = { 
+                id: crypto.randomUUID(),
+                date: dateOfShift,
+                in: dateToClockString(data.active), 
+                out: dateToClockString(punchTime), 
+                hoursWorked: calculateHours(data.active, punchTime)
             }
-        } else {
-            newData = { ...data, active: target }
+
+            setData(d => ({ ...d, active: null, history: [ newItem, ...d.history ] }))
+
+            if (data.earliest == null || dateOfShift < new Date(data.earliest)) {
+                setData(d => ({ ...d, earliest: dateOfShift }))
+            }
+
+            if (data.latest == null || dateOfShift > new Date(data.latest)) {
+                setData(d => ({ ...d, latest: dateOfShift }))
+            }
+
+        } else { // punch in
+            setData(d => ({ ...d, active: punchTime }));
         }
 
-        localStorage.setItem('data', JSON.stringify(newData));
         navigate("/");
     }
 
