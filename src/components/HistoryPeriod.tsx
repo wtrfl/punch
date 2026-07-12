@@ -20,7 +20,7 @@ const HistoryPeriod: React.FC<Props> = ({ data, handleDelete, referenceDate }) =
     return (
         <div className="flex flex-col">
             <span className="text-xs font-mono">PAY PERIOD ENDING {formattedDate(referenceDate)}</span>
-            <span className="text-xs font-mono">{hours} HOURS - ${Math.floor(pay)}</span>
+            <span className="text-xs font-mono">{parseFloat(hours.toFixed(1))} HOURS - ${Math.floor(pay)}</span>
             <div className="flex flex-col border border-b-2 mt-2">
                 {shifts.map(shift => (
                     <SlideableLine shift={shift} handleDelete={handleDelete} key={shift.id} />
